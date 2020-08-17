@@ -1,11 +1,13 @@
 package ted.getaroom.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.Room;
 import ted.getaroom.repositories.RoomRepository;
 
 @RestController
 @RequestMapping("/api/rooms")
+@PreAuthorize("hasRole('ADMIN') or hasRole('TENANT')")
 public class RoomController {
 
     private final RoomRepository roomRepository;
