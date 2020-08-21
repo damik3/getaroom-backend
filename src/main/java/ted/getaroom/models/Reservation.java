@@ -1,5 +1,8 @@
 package ted.getaroom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -12,11 +15,13 @@ public class Reservation {
     @ManyToOne
     @MapsId("user_id")
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     User user;
 
     @ManyToOne
     @MapsId("room_id")
     @JoinColumn(name = "room_id")
+    @JsonIgnore
     Room room;
 
     private int price;

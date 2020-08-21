@@ -1,5 +1,8 @@
 package ted.getaroom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,11 +14,13 @@ public class RoomReview {
     @ManyToOne
     @MapsId("user_id")
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"id", "name", "surname", "email", "phone", "rooms"})
     User user;
 
     @ManyToOne
     @MapsId("room_id")
     @JoinColumn(name = "room_id")
+    @JsonIgnore
     Room room;
 
     private String review;

@@ -1,5 +1,8 @@
 package ted.getaroom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +23,7 @@ public class User {
 
     @NotBlank
     @Size(max = 50)
+    @JsonIgnore
     private String password;
 
     @NotBlank
@@ -43,12 +47,14 @@ public class User {
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_rooms",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id"))
+    @JsonIgnoreProperties({"owner", "pricePerDay", "address", "description", "numBeds", "reservations"})
     private Set<Room> rooms = new HashSet<>();
 
     public User() {

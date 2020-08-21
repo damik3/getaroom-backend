@@ -7,7 +7,6 @@ import ted.getaroom.repositories.RoomRepository;
 
 @RestController
 @RequestMapping("/api/rooms")
-@PreAuthorize("hasRole('ADMIN') or hasRole('TENANT')")
 public class RoomController {
 
     private final RoomRepository roomRepository;

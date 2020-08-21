@@ -1,7 +1,10 @@
 package ted.getaroom.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 public class Room {
@@ -11,6 +14,7 @@ public class Room {
 
     @ManyToOne
     @NotNull
+    @JsonIgnoreProperties({"name", "surname", "email", "phone", "rooms"})
     private User owner;
 
     private Integer pricePerDay;
@@ -18,16 +22,21 @@ public class Room {
     private String description;
     private Integer numBeds;
 
+    @OneToMany(mappedBy = "room")
+    @JsonIgnoreProperties({"room", "id", "user", "price"})
+    Set<Reservation> reservations;
+
     public Room() {
     }
 
-    public Room(Long id, @NotNull User owner, Integer pricePerDay, String address, String description, Integer numBeds) {
+    public Room(Long id, @NotNull User owner, Integer pricePerDay, String address, String description, Integer numBeds, Set<Reservation> reservations) {
         this.id = id;
         this.owner = owner;
         this.pricePerDay = pricePerDay;
         this.address = address;
         this.description = description;
         this.numBeds = numBeds;
+        this.reservations = reservations;
     }
 
     public Long getId() {
@@ -76,5 +85,13 @@ public class Room {
 
     public void setNumBeds(Integer numBeds) {
         this.numBeds = numBeds;
+    }
+
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
     }
 }
