@@ -42,32 +42,35 @@ public class UserController {
     // Allow only users with matching IDs to access this resource
     public User one(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
 
-        User user = null;
-
         // Get token from Authorization field
         String jwt = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        //System.out.println("Contents of auth header = " + jwt);
 
+        // Remove substring 'Bearer' from the start of the string
         if (jwt.startsWith("Bearer"))
             jwt = jwt.substring(7, jwt.length());
 
-        // If it is a valid jwt token
+
+
+        // If it is a valid jwt
         if (jwt != null  &&  jwtUtils.validateJwtToken(jwt)) {
 
-            // Load username
+            // Get username from jwt
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
-            //System.out.println("jwt username = " + username);
 
-            user = userRepository.findByUsername(username).orElse(null);
+            // Load user by username
+            User user = userRepository.findByUsername(username).orElse(null);
 
+            // If user is found and has matching IDs then allow
             if (user != null && user.getId() == id) {
-                //System.out.println("VOILA");
                 return user;
             }
 
+            // else return Forbidden
             else
                 throw new ForbiddenException();
         }
+
+
 
         // If it is not a valid jwt token,
         // or if it the ids are not matching,
