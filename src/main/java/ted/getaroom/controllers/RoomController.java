@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.Room;
 import ted.getaroom.repositories.RoomRepository;
 
+
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
