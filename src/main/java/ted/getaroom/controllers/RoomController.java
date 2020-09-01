@@ -1,15 +1,24 @@
 package ted.getaroom.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.Room;
+import ted.getaroom.models.User;
 import ted.getaroom.repositories.RoomRepository;
+import ted.getaroom.myExceptions.BadRequestException;
+import ted.getaroom.repositories.UserRepository;
+
+import java.util.Set;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final RoomRepository roomRepository;
 
@@ -24,6 +33,22 @@ public class RoomController {
 
     @PostMapping
     public Room newRoom(@RequestBody Room newRoom) {
+
+        // Field owner.id must not be null
+        if (newRoom.getOwner().getId() == null)
+            throw new BadRequestException();
+
+        // Find owner and add room to his ownership
+        User user = userRepository.findById(newRoom.getOwner().getId()).orElse(null);
+
+        if (user == null)
+            throw new BadRequestException();
+
+        Set<Room> rooms = user.getRooms();
+        rooms.add(newRoom);
+        user.setRooms(rooms);
+
+        // Save newRoom and return
         return roomRepository.save(newRoom);
     }
 

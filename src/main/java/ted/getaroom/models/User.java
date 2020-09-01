@@ -51,7 +51,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_rooms",
+    @JoinTable(name = "user_rooms",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id"))
     @JsonIgnoreProperties({"owner", "pricePerDay", "address", "description", "numBeds", "reservations"})
