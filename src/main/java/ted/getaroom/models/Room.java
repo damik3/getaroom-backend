@@ -3,6 +3,8 @@ package ted.getaroom.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -17,25 +19,33 @@ public class Room {
     @JsonIgnoreProperties({"name", "surname", "email", "phone", "rooms"})
     private User owner;
 
-    private Integer pricePerDay;
+    private String title;
+    private String country;
+    private String city;
+    private String area;
     private String address;
-    private String description;
     private Integer numBeds;
+    private String description;
+    private Integer pricePerDay;
 
     @OneToMany(mappedBy = "room")
-    @JsonIgnoreProperties({"room", "id", "user", "price"})
+    @JsonIgnoreProperties({"room", "id", "user", "price", "country", "city", "area"})
     Set<Reservation> reservations;
 
     public Room() {
     }
 
-    public Room(Long id, @NotNull User owner, Integer pricePerDay, String address, String description, Integer numBeds, Set<Reservation> reservations) {
+    public Room(Long id, @NotNull User owner, String country, String city, String area, String title, Integer numBeds, String description, Integer pricePerDay, String address, Set<Reservation> reservations) {
         this.id = id;
         this.owner = owner;
+        this.country = country;
+        this.city = city;
+        this.area = area;
+        this.title = title;
+        this.numBeds = numBeds;
+        this.description = description;
         this.pricePerDay = pricePerDay;
         this.address = address;
-        this.description = description;
-        this.numBeds = numBeds;
         this.reservations = reservations;
     }
 
@@ -53,6 +63,38 @@ public class Room {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Integer getPricePerDay() {

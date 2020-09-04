@@ -54,7 +54,7 @@ public class User {
     @JoinTable(name = "user_rooms",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id"))
-    @JsonIgnoreProperties({"owner", "pricePerDay", "address", "description", "numBeds", "reservations"})
+    @JsonIgnoreProperties({"owner", "pricePerDay", "address", "description", "numBeds", "reservations", "country", "city", "area"})
     private Set<Room> rooms = new HashSet<>();
 
     public User() {
