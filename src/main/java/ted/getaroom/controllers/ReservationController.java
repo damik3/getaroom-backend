@@ -1,6 +1,5 @@
 package ted.getaroom.controllers;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.Reservation;
 import ted.getaroom.repositories.ReservationRepository;
@@ -22,7 +21,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public Reservation newReservation(@RequestBody Reservation r ) {
-        return reservationRepository.save(r);
+    public Reservation newReservation(@RequestBody Reservation reservation ) {
+        return reservationRepository.save(reservation);
     }
 }

@@ -4,36 +4,39 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
 public class Reservation {
 
-    @EmbeddedId
-    ReservationKey id;
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    Long id;
 
     @ManyToOne
-    @MapsId("user_id")
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
+    @NotNull
+    @JsonIgnoreProperties({"name", "surname", "email", "phone", "rooms"})
     User user;
 
     @ManyToOne
-    @MapsId("room_id")
-    @JoinColumn(name = "room_id")
-    @JsonIgnore
+    @NotNull
+    @JsonIgnoreProperties({"owner", "pricePerDay", "address", "description", "numBeds", "reservations", "country", "city", "area"})    @NotNull
     Room room;
 
+    @NotNull
     private int price;
 
+    @NotNull
     private LocalDate dateFrom;
 
+    @NotNull
     private LocalDate dateTo;
 
     public Reservation() {
     }
 
-    public Reservation(ReservationKey id, User user, Room room, int price, LocalDate dateFrom, LocalDate dateTo) {
+    public Reservation(Long id, User user, Room room, int price, LocalDate dateFrom, LocalDate dateTo) {
         this.id = id;
         this.user = user;
         this.room = room;
@@ -42,11 +45,11 @@ public class Reservation {
         this.dateTo = dateTo;
     }
 
-    public ReservationKey getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(ReservationKey id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
