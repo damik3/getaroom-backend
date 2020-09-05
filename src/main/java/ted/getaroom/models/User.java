@@ -11,7 +11,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Entity // This tells Hibernate to make a table out of this class
+@Entity
 public class User {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -140,5 +140,17 @@ public class User {
 
     public void setRooms(Set<Room> rooms) {
         this.rooms = rooms;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
     }
 }

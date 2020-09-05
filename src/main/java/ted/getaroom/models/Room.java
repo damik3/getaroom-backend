@@ -136,4 +136,20 @@ public class Room {
     public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", owner=" + owner +
+                ", title='" + title + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", area='" + area + '\'' +
+                ", address='" + address + '\'' +
+                ", numBeds=" + numBeds +
+                ", description='" + description + '\'' +
+                ", pricePerDay=" + pricePerDay +
+                '}';
+    }
 }
