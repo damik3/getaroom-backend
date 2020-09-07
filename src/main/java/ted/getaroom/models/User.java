@@ -22,7 +22,6 @@ public class User {
     private String username;
 
     @NotBlank
-    @Size(max = 50)
     @JsonIgnore
     private String password;
 
