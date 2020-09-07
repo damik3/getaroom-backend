@@ -11,8 +11,6 @@ import ted.getaroom.payload.request.SearchRequest;
 import ted.getaroom.repositories.RoomRepository;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,8 +33,10 @@ public class SearchController {
     public Iterable<Room> search(@Valid @RequestBody SearchRequest searchRequest) {
 
         // Check validity of dates
-        if (searchRequest.getDateTo().isBefore(searchRequest.getDateFrom()))
+        if (!searchRequest.getDateTo().isAfter(searchRequest.getDateFrom()))
             throw new BadRequestException();
+
+
 
         List<Room> rooms = new LinkedList<Room>();
 
@@ -60,7 +60,7 @@ public class SearchController {
 
 
 
-        List<Room> result = rooms;
+        List<Room> result = new LinkedList<Room>(rooms);
 
         //
         // For each room satisfying the above
@@ -68,14 +68,10 @@ public class SearchController {
 
         for (Room room: rooms) {
             Set<Reservation> roomReservations = room.getReservations();
-            boolean available = true;
 
             //
-            // Check if it is available for the specified period
+            // For each reservation made on current room, check if it available for the wanter period
             //
-
-            roomReservations.removeIf(reservation -> !(searchRequest.getDateTo().isBefore(reservation.getDateFrom()) ||
-                    searchRequest.getDateFrom().isAfter(reservation.getDateTo())));
 
             for (Reservation reservation: roomReservations) {
 

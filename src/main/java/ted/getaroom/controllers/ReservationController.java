@@ -28,8 +28,10 @@ public class ReservationController {
     public Reservation newReservation(@RequestBody Reservation reservation ) {
 
         // Check if reservation is valid and can be made
-        if (search.isValid(reservation))
+        if (search.isValid(reservation)) {
+            reservation.getRoom().getReservations().add(reservation);
             return reservationRepository.save(reservation);
+        }
         else
             throw new BadRequestException();
     }
