@@ -6,6 +6,7 @@ import ted.getaroom.Search;
 import ted.getaroom.myExceptions.BadRequestException;
 import ted.getaroom.repositories.ReservationRepository;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {

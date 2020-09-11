@@ -3,9 +3,8 @@ package ted.getaroom.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -30,7 +29,7 @@ public class Room {
 
     @OneToMany(mappedBy = "room")
     @JsonIgnoreProperties({"room", "id", "user", "price", "country", "city", "area"})
-    Set<Reservation> reservations;
+    Set<Reservation> reservations = new HashSet<>();
 
     public Room() {
     }
