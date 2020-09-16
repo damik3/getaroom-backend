@@ -3,6 +3,7 @@ package ted.getaroom.controllers;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -20,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ted.getaroom.models.ERole;
+import ted.getaroom.models.HostRequest;
 import ted.getaroom.models.Role;
 import ted.getaroom.models.User;
 import ted.getaroom.payload.request.LoginRequest;
 import ted.getaroom.payload.request.SignupRequest;
 import ted.getaroom.payload.response.JwtResponse;
 import ted.getaroom.payload.response.MessageResponse;
+import ted.getaroom.repositories.HostRequestRepository;
 import ted.getaroom.repositories.RoleRepository;
 import ted.getaroom.repositories.UserRepository;
 import ted.getaroom.security.jwt.JwtUtils;
@@ -44,6 +47,9 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    HostRequestRepository hostRequestRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -91,9 +97,14 @@ public class AuthController {
         user.setUsername(signUpRequest.getUsername());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
+        user.setName(signUpRequest.getName());
+        user.setSurname(signUpRequest.getSurname());
+        user.setPhone(signUpRequest.getPhone());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
+
+        AtomicReference<Boolean> wantsToBeHost = new AtomicReference<>(false);
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_TENANT)
@@ -102,12 +113,6 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-
-                        roles.add(adminRole);
-                        break;
                     case "tenant":
                         Role tenantRole = roleRepository.findByName(ERole.ROLE_TENANT)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -117,8 +122,8 @@ public class AuthController {
                     case "host":
                         Role hostRole = roleRepository.findByName(ERole.ROLE_HOST)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(hostRole);
 
+                        wantsToBeHost.set(true);
                         break;
 
                     default:
@@ -129,6 +134,12 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
+
+        if (wantsToBeHost.get()) {
+            // Request pending for admin approval
+            HostRequest hostRequest = new HostRequest(user.getId());
+            this.hostRequestRepository.save(hostRequest);
+        }
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

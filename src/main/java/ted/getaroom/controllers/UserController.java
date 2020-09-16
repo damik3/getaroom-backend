@@ -1,12 +1,14 @@
 package ted.getaroom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.User;
 import ted.getaroom.myExceptions.ForbiddenException;
+import ted.getaroom.payload.response.MessageResponse;
+import ted.getaroom.repositories.HostRequestRepository;
 import ted.getaroom.repositories.UserRepository;
 import ted.getaroom.security.jwt.JwtUtils;
 
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HostRequestRepository hostRequestRepository;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -41,7 +46,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     // Allow only users with matching IDs to access this resource
-    public User one(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
+    public User oneUser(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
 
         // Get token from Authorization field
         String jwt = headers.getFirst(HttpHeaders.AUTHORIZATION);
@@ -127,5 +132,12 @@ public class UserController {
         // or if it the ids are not matching,
         else
             throw new ForbiddenException();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        this.hostRequestRepository.deleteByUserId(id);
+        this.userRepository.deleteById(id);
+        return ResponseEntity.ok(new MessageResponse("User deleted successfully!"));
     }
 }

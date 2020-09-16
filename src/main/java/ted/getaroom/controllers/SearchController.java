@@ -68,7 +68,7 @@ public class SearchController {
             Set<Reservation> roomReservations = room.getReservations();
 
             //
-            // For each reservation made on current room, check if it available for the wanter period
+            // For each reservation made on current room, check if it available for the wanted period
             //
 
             for (Reservation reservation: roomReservations) {
