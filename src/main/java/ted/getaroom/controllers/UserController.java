@@ -5,33 +5,34 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ted.getaroom.models.ERole;
+import ted.getaroom.models.Role;
 import ted.getaroom.models.User;
 import ted.getaroom.myExceptions.ForbiddenException;
 import ted.getaroom.payload.response.MessageResponse;
 import ted.getaroom.repositories.HostRequestRepository;
+import ted.getaroom.repositories.RoleRepository;
 import ted.getaroom.repositories.UserRepository;
 import ted.getaroom.security.jwt.JwtUtils;
 
-import java.util.Optional;
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
-//@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private HostRequestRepository hostRequestRepository;
 
     @Autowired
     private JwtUtils jwtUtils;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -66,9 +67,13 @@ public class UserController {
             // Load user by username
             User user = userRepository.findByUsername(username).orElse(null);
 
+            // Load admin role string
+            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
             // If user is found and has matching IDs then allow
-            if (user != null && user.getId() == id) {
-                return user;
+            if (user != null && (user.getId() == id) || user.getRoles().contains(adminRole)) {
+                return userRepository.findById(id).orElse(null);
             }
 
             // else return Forbidden
@@ -135,6 +140,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         this.hostRequestRepository.deleteByUserId(id);
         this.userRepository.deleteById(id);

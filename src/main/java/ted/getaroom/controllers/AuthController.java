@@ -133,6 +133,7 @@ public class AuthController {
         }
 
         user.setRoles(roles);
+        user.setHostReqPending(wantsToBeHost.get());
         userRepository.save(user);
 
         if (wantsToBeHost.get()) {

@@ -57,6 +57,7 @@ public class HostRequestController {
         Set<Role> roles = user.getRoles();
         roles.add(hostRole);
         user.setRoles(roles);
+        user.setHostReqPending(false);
 
         // Update user
         this.userRepository.save(user);

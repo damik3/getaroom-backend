@@ -42,6 +42,8 @@ public class User {
     @Size(max = 50)
     private String phone;
 
+    private boolean hostReqPending;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(	name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -59,7 +61,7 @@ public class User {
     public User() {
     }
 
-    public User(Long id, @NotBlank @Size(max = 50) String username, @NotBlank @Size(max = 50) String password, @NotBlank @Size(max = 50) String name, @NotBlank @Size(max = 50) String surname, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 50) String phone) {
+    public User(Long id, @NotBlank @Size(max = 50) String username, @NotBlank @Size(max = 50) String password, @NotBlank @Size(max = 50) String name, @NotBlank @Size(max = 50) String surname, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 50) String phone, boolean hostReqPending) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -67,6 +69,7 @@ public class User {
         this.surname = surname;
         this.email = email;
         this.phone = phone;
+        this.hostReqPending = hostReqPending;
     }
 
     public Long getId() {
@@ -123,6 +126,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isHostReqPending() {
+        return hostReqPending;
+    }
+
+    public void setHostReqPending(boolean hostReqPending) {
+        this.hostReqPending = hostReqPending;
     }
 
     public Set<Role> getRoles() {
