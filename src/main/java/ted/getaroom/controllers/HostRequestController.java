@@ -1,11 +1,7 @@
 package ted.getaroom.controllers;
 
-import org.aspectj.bridge.Message;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ted.getaroom.models.ERole;
 import ted.getaroom.models.HostRequest;
 import ted.getaroom.models.Role;
@@ -15,21 +11,31 @@ import ted.getaroom.repositories.HostRequestRepository;
 import ted.getaroom.repositories.RoleRepository;
 import ted.getaroom.repositories.UserRepository;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/host-request")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class HostRequestController {
 
     private final UserRepository userRepository;
     private final HostRequestRepository hostRequestRepository;
     private final RoleRepository roleRepository;
 
+
+
     public HostRequestController(UserRepository userRepository, HostRequestRepository hostRequestRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.hostRequestRepository = hostRequestRepository;
         this.roleRepository = roleRepository;
+    }
+
+
+
+    // Return all users with their host request pending approval
+    @GetMapping
+    public Iterable<User> allRequests() {
+        return this.userRepository.findByHostReqPending(true);
     }
 
 
