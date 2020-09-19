@@ -15,7 +15,7 @@ public class Room {
 
     @ManyToOne
     @NotNull
-    @JsonIgnoreProperties({"name", "surname", "email", "phone", "rooms"})
+    @JsonIgnoreProperties({"rooms", "hostReqPending"})
     private User owner;
 
     private String title;
