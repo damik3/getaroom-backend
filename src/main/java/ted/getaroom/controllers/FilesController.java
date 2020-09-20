@@ -46,7 +46,7 @@ public class FilesController {
             System.out.println("Path = " + path);
             String filename = path.getFileName().toString();
             String url = MvcUriComponentsBuilder
-                    .fromMethodName(FilesController.class, "getFile", id + '/' + filename).build().toString();
+                    .fromMethodName(FilesController.class, "getFile", id, filename).build().toString();
 
             return new FileInfo(filename, url);
         }).collect(Collectors.toList());
