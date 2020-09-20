@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
 
-    private final Path root = Paths.get("uploads");
+    private final String uploadPath = new String("uploads");
+
+    private final Path root = Paths.get(uploadPath);
 
     @Override
     public void init() {
@@ -28,10 +30,24 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     }
 
     @Override
-    public void save(MultipartFile file) {
+    public void save(MultipartFile file, String roomId) {
+
+        // Create "uploads/roomId" path
+        Path roomPath = Paths.get(uploadPath, roomId);
+
+        // Create directory
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
-        } catch (Exception e) {
+            Files.createDirectory(roomPath);
+        }
+
+        // If it already exists, ignore and continue
+        catch (IOException ignored) {}
+
+        // Save file
+        try {
+            Files.copy(file.getInputStream(), roomPath.resolve(file.getOriginalFilename()));
+        }
+        catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
     }
