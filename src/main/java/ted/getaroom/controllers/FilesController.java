@@ -26,14 +26,17 @@ public class FilesController {
     FilesStorageService storageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<MessageResponse> uploadFile(@RequestParam("file") MultipartFile file
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file
                                                         , @RequestParam("roomId") String roomId) {
         String message = "";
         try {
             storageService.save(file, roomId);
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
-            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(message));
+            String filename = file.getOriginalFilename();
+            String url = MvcUriComponentsBuilder
+                    .fromMethodName(FilesController.class, "getFile", roomId, filename).build().toString();
+            return ResponseEntity.ok(new FileInfo(filename, url, message));
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new MessageResponse(message));
@@ -43,7 +46,6 @@ public class FilesController {
     @GetMapping("/files/room/{id}")
     public ResponseEntity<List<FileInfo>> getListFiles(@PathVariable String id) {
         List<FileInfo> fileInfos = storageService.loadAll(id).map(path -> {
-            System.out.println("Path = " + path);
             String filename = path.getFileName().toString();
             String url = MvcUriComponentsBuilder
                     .fromMethodName(FilesController.class, "getFile", id, filename).build().toString();
