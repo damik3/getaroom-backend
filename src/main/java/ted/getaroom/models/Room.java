@@ -26,6 +26,7 @@ public class Room {
     private Integer numBeds;
     private String description;
     private Integer pricePerDay;
+    private String mainPhotoUrl;
 
     @OneToMany(mappedBy = "room")
     @JsonIgnoreProperties({"room", "id", "user", "price", "country", "city", "area"})
@@ -134,6 +135,14 @@ public class Room {
 
     public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public String getMainPhotoUrl() {
+        return mainPhotoUrl;
+    }
+
+    public void setMainPhotoUrl(String mainPhotoUrl) {
+        this.mainPhotoUrl = mainPhotoUrl;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package ted.getaroom.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ted.getaroom.models.FileInfo;
 import ted.getaroom.models.Room;
 import ted.getaroom.models.User;
+import ted.getaroom.payload.response.MessageResponse;
 import ted.getaroom.repositories.RoomRepository;
 import ted.getaroom.myExceptions.BadRequestException;
 import ted.getaroom.repositories.UserRepository;
@@ -50,6 +53,20 @@ public class RoomController {
 
         // Save newRoom and return
         return roomRepository.save(newRoom);
+    }
+
+    @PostMapping("/{id}/add-main-photo")
+    public ResponseEntity<MessageResponse> addMainPhoto(@PathVariable Long id, @RequestBody FileInfo photo) {
+        Room room = roomRepository.findById(id).orElse(null);
+
+        if (room == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Room not found!"));
+        }
+        else {
+            room.setMainPhotoUrl(photo.getUrl());
+            roomRepository.save(room);
+            return ResponseEntity.ok(new MessageResponse("Main photo added!"));
+        }
     }
 
     @GetMapping("/{id}")
