@@ -29,10 +29,14 @@ public class RoomController {
         this.roomRepository = roomRepository;
     }
 
+
+
     @GetMapping
     public Iterable<Room> all() {
         return roomRepository.findAll();
     }
+
+
 
     @PostMapping
     public Room newRoom(@RequestBody Room newRoom) {
@@ -55,6 +59,8 @@ public class RoomController {
         return roomRepository.save(newRoom);
     }
 
+
+
     @PostMapping("/{id}/add-main-photo")
     public ResponseEntity<MessageResponse> addMainPhoto(@PathVariable Long id, @RequestBody FileInfo photo) {
         Room room = roomRepository.findById(id).orElse(null);
@@ -69,9 +75,66 @@ public class RoomController {
         }
     }
 
+
+
     @GetMapping("/{id}")
     public Room one(@PathVariable Long id) {
         return roomRepository.findById(id)
                 .orElse(new Room());
+    }
+
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteRoom(@PathVariable Long id) {
+
+        // Find room
+        Room room = roomRepository.findById(id).orElse(null);
+        if (room == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Room does not exist!"));
+        }
+
+        // Find owner
+        User owner = userRepository.findById(room.getOwner().getId()).orElse(null);
+        if (owner == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Room does not have an owner!"));
+        }
+
+        // Remove room from owner
+        owner.getRooms().remove(room);
+        userRepository.save(owner);
+
+        // Delete room
+        roomRepository.deleteById(id);
+
+        return ResponseEntity.ok(new MessageResponse("Room deleted successfully!"));
+    }
+
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateRoom(@RequestBody Room newRoom, @PathVariable Long id) {
+
+        // Get room
+        Room room = roomRepository.findById(id).orElse(null);
+        if (room == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Room does not exist!"));
+        }
+
+        // Update room
+        room.setAddress(newRoom.getAddress());
+        room.setArea(newRoom.getArea());
+        room.setCity(newRoom.getCity());
+        room.setCountry(newRoom.getCountry());
+        room.setDescription(newRoom.getDescription());
+        room.setNumBeds(newRoom.getNumBeds());
+        room.setPricePerDay(newRoom.getPricePerDay());
+        room.setTitle(newRoom.getTitle());
+
+        // Persist room
+        roomRepository.save(room);
+
+        return ResponseEntity.ok(new MessageResponse("Room successfully updated!"));
+
     }
 }
