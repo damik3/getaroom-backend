@@ -140,7 +140,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         this.hostRequestRepository.deleteByUserId(id);
         this.userRepository.deleteById(id);
